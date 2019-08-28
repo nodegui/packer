@@ -1,5 +1,7 @@
 # Packer
 
+> Warning: This is WIP. It works for MacOS now. Should be ready for linux and Windows very soon.
+
 Go to your nodegui app repo
 
 and then
