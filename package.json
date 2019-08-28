@@ -2,7 +2,8 @@
   "name": "@nodegui/packer",
   "version": "1.0.0",
   "files": [
-    "dist"
+    "dist",
+    "template"
   ],
   "description": "Package and deploy apps built with NodeGUI to all platforms",
   "main": "./dist/index.js",
