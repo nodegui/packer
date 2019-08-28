@@ -1,0 +1,30 @@
+{
+  "name": "@nodegui/packer",
+  "version": "1.0.0",
+  "files": [
+    "dist"
+  ],
+  "description": "Package and deploy apps built with NodeGUI to all platforms",
+  "main": "./dist/index.js",
+  "bin": {
+    "nodegui-packer": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "atulanand94@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@nodegui/qode": "^1.0.3",
+    "@types/fs-extra": "^8.0.0",
+    "typescript": "^3.5.3"
+  },
+  "peerDependencies": {
+    "@nodegui/qode": ">=1.0.4"
+  },
+  "dependencies": {
+    "commander": "^3.0.0",
+    "fs-extra": "^8.1.0"
+  }
+}
