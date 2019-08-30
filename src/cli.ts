@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import program from "commander";
-import { init, pack } from "./index";
+import process from "process";
+import { getPacker } from "./index";
 
 program
   .option("-i, --init <name>", "Creates initial deploy files")
@@ -10,10 +11,13 @@ program
 program.parse(process.argv);
 const options = program.opts();
 
+const platformName = process.platform;
+const packer = getPacker(platformName);
+
 if (program.init) {
-  init(options.init);
+  packer.init(options.init);
 }
 
 if (program.pack) {
-  pack(options.pack);
+  packer.pack(options.pack);
 }
