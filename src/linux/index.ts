@@ -19,31 +19,31 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
   });
 };
 
-const runMacDeployQt = async (appName: string, buildDir: string) => {
-  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
-  const macDeployQtBin = path.resolve(qtHome, "bin", "macdeployqt");
+const runLinuxDeployQt = async (appName: string, buildDir: string) => {
+  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome; //linux qt build doesnt have linuxdeployqt
+  const linuxDeployQtBin = path.resolve(qode.qtHome, "bin", "linuxdeployqt.AppImage");
   try {
-    await fs.chmod(macDeployQtBin, "755");
+    await fs.chmod(linuxDeployQtBin, "755");
   } catch (err) {
-    console.warn(`Warning: Tried to fix permission for macdeployqt but failed`);
+    console.warn(`Warning: Tried to fix permission for linuxdeployqt but failed`);
   }
 
-  const macDeployQt = spawn(
-    macDeployQtBin,
-    [`${appName}.app`, "-dmg", "-verbose=3", `-libpath ${qode.qtHome}`],
-    { cwd: buildDir }
+  const linuxDeployQt = spawn(
+    linuxDeployQtBin,
+    [`qode`, "-verbose=2","-unsupported-bundle-everything","-appimage",`-qmake=${path.resolve(qtHome,'bin','qmake')}`],
+    { cwd: buildDir}
   );
 
   return new Promise((resolve, reject) => {
-    macDeployQt.stdout.on("data", function(data) {
+    linuxDeployQt.stdout.on("data", function(data) {
       console.log("stdout: " + data.toString());
     });
 
-    macDeployQt.stderr.on("data", function(data) {
+    linuxDeployQt.stderr.on("data", function(data) {
       console.log("stderr: " + data.toString());
     });
 
-    macDeployQt.on("exit", function(code) {
+    linuxDeployQt.on("exit", function(code) {
       if (!code) {
         return resolve();
       }
@@ -56,9 +56,9 @@ export const init = async (appName: string) => {
   const config = {
     appName: null
   };
-  const templateDirectory = path.resolve(__dirname, "../../template/darwin");
-  const userTemplate = path.resolve(deployDirectory, "darwin");
-  const appDir = path.resolve(userTemplate, `${appName}.app`);
+  const templateDirectory = path.resolve(__dirname, "../../template/linux");
+  const userTemplate = path.resolve(deployDirectory, "linux");
+  const appDir = path.resolve(userTemplate, appName);
   await fs.mkdirp(path.resolve(userTemplate, appDir));
   await fs.copy(templateDirectory, appDir, { recursive: true });
   Object.assign(config, { appName });
@@ -70,22 +70,20 @@ export const pack = async (distPath: string) => {
     path.resolve(deployDirectory, "config.json")
   );
   const { appName } = config;
-  const usertemplate = path.resolve(deployDirectory, "darwin");
-  const templateAppDir = path.resolve(usertemplate, `${appName}.app`);
+  const usertemplate = path.resolve(deployDirectory, "linux");
+  const templateAppDir = path.resolve(usertemplate, appName);
   const buildDir = path.resolve(usertemplate, "build");
-  const buildAppPackage = path.resolve(buildDir, `${appName}.app`);
-  const Contents = path.resolve(buildAppPackage, "Contents");
-  const MacOs = path.resolve(Contents, "MacOs");
-  const Resources = path.resolve(Contents, "Resources");
+  const buildAppPackage = path.resolve(buildDir, appName);
+
   console.log(`cleaning build directory at ${buildDir}`);
   await fs.remove(buildDir);
   console.log(`creating build directory at ${buildDir}`);
   await fs.copy(templateAppDir, buildAppPackage, { recursive: true });
   console.log(`copying qode`);
-  await copyQode(MacOs);
+  await copyQode(buildAppPackage);
   console.log(`copying dist`);
-  await copyAppDist(distPath, Resources);
-  console.log(`running macdeployqt`);
-  await runMacDeployQt(appName, buildDir);
-  console.log(`Build successful. Find the dmg/app at ${buildDir}`);
+  await copyAppDist(distPath, buildAppPackage);
+  console.log(`running linuxdeployqt`);
+  await runLinuxDeployQt(appName, buildAppPackage);
+  console.log(`Build successful. Find the app at ${buildDir}`);
 };

@@ -70,8 +70,6 @@ export const pack = async (distPath: string) => {
   const templateAppDir = path.resolve(usertemplate, appName);
   const buildDir = path.resolve(usertemplate, "build");
   const buildAppPackage = path.resolve(buildDir, appName);
-  const bin = path.resolve(buildAppPackage, "bin");
-  //   const Resources = path.resolve(Contents, "Resources");
   console.log(`cleaning build directory at ${buildDir}`);
   await fs.remove(buildDir);
   console.log(`creating build directory at ${buildDir}`);
@@ -82,5 +80,5 @@ export const pack = async (distPath: string) => {
   await copyAppDist(distPath, buildAppPackage);
   console.log(`running windeployqt`);
   await runWinDeployQt(appName, buildAppPackage);
-  console.log(`Build successful. Find the dmg/app at ${buildDir}`);
+  console.log(`Build successful. Find the app at ${buildDir}`);
 };
