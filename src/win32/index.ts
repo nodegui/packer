@@ -21,7 +21,7 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
 
 const runWinDeployQt = async (appName: string, buildDir: string) => {
   const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
-  const winDeployQtBin = path.resolve(qtHome, "windeployqt.exe");
+  const winDeployQtBin = path.resolve(qtHome, "bin", "windeployqt.exe");
   const winDeployQt = spawn(
     winDeployQtBin,
     [`qode.exe`, "--verbose=2", "--release", "--no-translations"],
