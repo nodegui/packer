@@ -21,7 +21,7 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
 
 const runMacDeployQt = async (appName: string, buildDir: string) => {
   const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
-  const macDeployQtBin = path.resolve(qtHome, "macdeployqt");
+  const macDeployQtBin = path.resolve(qtHome, "bin", "macdeployqt");
   try {
     await fs.chmod(macDeployQtBin, "755");
   } catch (err) {
