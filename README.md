@@ -1,4 +1,4 @@
-# Packer
+# Packer 📦
 
 Packer is a npm module that allows you to package apps built with NodeGUI or React NodeGUI into a standalone executable. Packer works on Mac, Windows and Linux
 
