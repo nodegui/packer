@@ -5,7 +5,9 @@ Packer is a npm module that allows you to package apps built with NodeGUI or Rea
 This is a initial MVP release of the module. 
 
 On MacOS - Packer will output a dmg file
+
 On Linux - Packer will output an AppImage which is something similar to a .app file in MacOS
+
 On Windows - Packer outputs a folder containing the executable and all the dlls.
 
 Currently if you need to produce a build you need to run the packer in different OS environments. That is, cross platform builds are not supported in this release. 
