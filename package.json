@@ -19,7 +19,7 @@
   "devDependencies": {
     "@nodegui/qode": "^1.0.4",
     "@types/fs-extra": "^8.0.0",
-    "@types/node": "^12.7.3",
+    "@types/node": "^13.1.8",
     "typescript": "^3.5.3"
   },
   "peerDependencies": {
