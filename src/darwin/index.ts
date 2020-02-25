@@ -19,7 +19,13 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
   });
 };
 
-const runMacDeployQt = async (appName: string, buildDir: string) => {
+export type macDeployQtOptions = {
+  appName: string,
+  buildDir: string,
+  identity?: string,
+}
+
+const runMacDeployQt = async ({appName, buildDir, identity}: macDeployQtOptions) => {
   const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
   const macDeployQtBin = path.resolve(qtHome, "bin", "macdeployqt");
   try {
@@ -30,7 +36,12 @@ const runMacDeployQt = async (appName: string, buildDir: string) => {
 
   const macDeployQt = spawn(
     macDeployQtBin,
-    [`${appName}.app`, "-dmg", "-verbose=3", `-libpath ${qode.qtHome}`],
+    [`${appName}.app`,
+      "-dmg",
+      "-verbose=3",
+      `-libpath ${qode.qtHome}`,
+        ...(identity ? [`-codesign=${identity}`] : [])
+    ],
     { cwd: buildDir }
   );
 
@@ -65,7 +76,7 @@ export const init = async (appName: string) => {
   await fs.writeJSON(configFile, config);
 };
 
-export const pack = async (distPath: string) => {
+export const pack = async (distPath: string, identity?: string) => {
   const config = await fs.readJSON(
     path.resolve(deployDirectory, "config.json")
   );
@@ -86,6 +97,6 @@ export const pack = async (distPath: string) => {
   console.log(`copying dist`);
   await copyAppDist(distPath, Resources);
   console.log(`running macdeployqt`);
-  await runMacDeployQt(appName, buildDir);
+  await runMacDeployQt({ appName, buildDir, identity });
   console.log(`Build successful. Find the dmg/app at ${buildDir}`);
 };

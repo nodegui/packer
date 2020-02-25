@@ -29,6 +29,12 @@ Currently if you need to produce a build you need to run the packer in different
   `npx nodegui-packer --pack <path to dist>`
   
   This command essential takes the dist folder as the input and puts it in the suitable location inside the standalone executable. Also it runs the correct deployment tool (macdeployqt incase of mac, etc) and packs in the dependencies. The output of the command is found under the build directory. You should gitignore the build directory.
+  
+- macOS supports signing the application:
+
+  `npx nodegui-packer --pack <path to dist> --sign <identity>`
+  
+  Identity should be added to the keychain and trusted first. Its value can be copied from: `security find-identity -p codesigning`
 
 # How does it work ?
 
