@@ -3,9 +3,12 @@ import path from "path";
 import { spawn } from "child_process";
 //@ts-ignore
 import qode from "@nodegui/qode";
+//@ts-ignore
+import { qtHome } from "@nodegui/nodegui/config/qtConfig";
 const cwd = process.cwd();
 const deployDirectory = path.resolve(cwd, "deploy");
 const configFile = path.resolve(deployDirectory, "config.json");
+const linuxDeployQtBin = path.resolve(__dirname, "..", "deps", "linuxdeployqt");
 
 const copyQode = async (dest: string) => {
   const qodeBinaryFile = qode.qodePath;
@@ -20,18 +23,16 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
 };
 
 const runLinuxDeployQt = async (appName: string, buildDir: string) => {
-  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome; //linux qt build doesnt have linuxdeployqt
-  const linuxDeployQtBin = path.resolve(qode.qtHome, "bin", "linuxdeployqt.AppImage");
-  try {
-    await fs.chmod(linuxDeployQtBin, "755");
-  } catch (err) {
-    console.warn(`Warning: Tried to fix permission for linuxdeployqt but failed`);
-  }
-
   const linuxDeployQt = spawn(
     linuxDeployQtBin,
-    [`qode`, "-verbose=2","-unsupported-bundle-everything","-appimage",`-qmake=${path.resolve(qtHome,'bin','qmake')}`],
-    { cwd: buildDir}
+    [
+      `qode`,
+      "-verbose=2",
+      "-unsupported-bundle-everything",
+      "-appimage",
+      `-qmake=${path.resolve(qtHome, "bin", "qmake")}`
+    ],
+    { cwd: buildDir }
   );
 
   return new Promise((resolve, reject) => {

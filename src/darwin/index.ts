@@ -3,6 +3,8 @@ import path from "path";
 import { spawn } from "child_process";
 //@ts-ignore
 import qode from "@nodegui/qode";
+//@ts-ignore
+import { qtHome } from "@nodegui/nodegui/config/qtConfig";
 const cwd = process.cwd();
 const deployDirectory = path.resolve(cwd, "deploy");
 const configFile = path.resolve(deployDirectory, "config.json");
@@ -20,13 +22,16 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
 };
 
 export type macDeployQtOptions = {
-  appName: string,
-  buildDir: string,
-  identity?: string,
-}
+  appName: string;
+  buildDir: string;
+  identity?: string;
+};
 
-const runMacDeployQt = async ({appName, buildDir, identity}: macDeployQtOptions) => {
-  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
+const runMacDeployQt = async ({
+  appName,
+  buildDir,
+  identity
+}: macDeployQtOptions) => {
   const macDeployQtBin = path.resolve(qtHome, "bin", "macdeployqt");
   try {
     await fs.chmod(macDeployQtBin, "755");
@@ -34,16 +39,18 @@ const runMacDeployQt = async ({appName, buildDir, identity}: macDeployQtOptions)
     console.warn(`Warning: Tried to fix permission for macdeployqt but failed`);
   }
 
-  const macDeployQt = spawn(
-    macDeployQtBin,
-    [`${appName}.app`,
-      "-dmg",
-      "-verbose=3",
-      `-libpath ${qode.qtHome}`,
-        ...(identity ? [`-codesign=${identity}`] : [])
-    ],
-    { cwd: buildDir }
-  );
+  const options = [
+    `${appName}.app`,
+    "-dmg",
+    "-verbose=3",
+    `-libpath=${qode.qtHome}`
+  ];
+
+  if (identity) {
+    options.push(`-codesign=${identity}`);
+  }
+
+  const macDeployQt = spawn(macDeployQtBin, options, { cwd: buildDir });
 
   return new Promise((resolve, reject) => {
     macDeployQt.stdout.on("data", function(data) {

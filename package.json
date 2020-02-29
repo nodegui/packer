@@ -12,20 +12,22 @@
   },
   "scripts": {
     "build": "tsc",
+    "postinstall": "node ./scripts/setupBinaries.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "atulanand94@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "@nodegui/qode": "^1.0.4",
+    "@nodegui/nodegui": "^0.15.0-alpha",
     "@types/fs-extra": "^8.0.0",
     "@types/node": "^12.7.3",
     "typescript": "^3.5.3"
   },
   "peerDependencies": {
-    "@nodegui/qode": ">=1.0.4"
+    "@nodegui/nodegui": ">=0.15.0"
   },
   "dependencies": {
+    "@nodegui/artifact-installer": "^1.0.0",
     "commander": "^4.0.1",
     "fs-extra": "^8.1.0"
   }
