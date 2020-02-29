@@ -3,7 +3,8 @@
   "version": "1.2.0-alpha-7",
   "files": [
     "dist",
-    "template"
+    "template",
+    "scripts"
   ],
   "description": "Package and deploy apps built with NodeGUI to all platforms",
   "main": "./dist/index.js",
