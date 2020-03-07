@@ -8,7 +8,7 @@ import { qtHome } from "@nodegui/nodegui/config/qtConfig";
 const cwd = process.cwd();
 const deployDirectory = path.resolve(cwd, "deploy");
 const configFile = path.resolve(deployDirectory, "config.json");
-const linuxDeployQtBin = path.resolve(__dirname, "..", "deps", "linuxdeployqt");
+const linuxDeployQtBin = path.resolve(__dirname, "..", "..", "deps", "linuxdeployqt");
 
 const copyQode = async (dest: string) => {
   const qodeBinaryFile = qode.qodePath;
@@ -22,17 +22,39 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
   });
 };
 
+function getAllNodeAddons(dirPath: string) {
+  const addonExt = "node";
+  let dir = fs.readdirSync(dirPath);
+  return dir
+    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt})`, "ig")))
+    .map(eachElement => path.resolve(dirPath, eachElement));
+}
+
+const addonCommands = (addonPaths: string[]): string[] => {
+  return addonPaths.reduce((commandList: string[], currentAddon) => {
+    commandList.push(`-executable=${currentAddon}`);
+    return commandList;
+  }, []);
+};
+
+
 const runLinuxDeployQt = async (appName: string, buildDir: string) => {
+  
+  const distPath = path.resolve(buildDir, "dist");
+  const allAddons = getAllNodeAddons(distPath);
+  const LD_LIBRARY_PATH=`${qtHome}/lib:${process.env.LD_LIBRARY_PATH}`;
+
   const linuxDeployQt = spawn(
     linuxDeployQtBin,
     [
       `qode`,
       "-verbose=2",
-      "-unsupported-bundle-everything",
+      "-bundle-non-qt-libs",
       "-appimage",
-      `-qmake=${path.resolve(qtHome, "bin", "qmake")}`
+      `-qmake=${path.resolve(qtHome, "bin", "qmake")}`,
+      ...addonCommands(allAddons)
     ],
-    { cwd: buildDir }
+    { cwd: buildDir, env: {...process.env, LD_LIBRARY_PATH} }
   );
 
   return new Promise((resolve, reject) => {
@@ -86,5 +108,5 @@ export const pack = async (distPath: string) => {
   await copyAppDist(distPath, buildAppPackage);
   console.log(`running linuxdeployqt`);
   await runLinuxDeployQt(appName, buildAppPackage);
-  console.log(`Build successful. Find the app at ${buildDir}`);
+  console.log(`Build successful. Find the AppImage at ${buildAppPackage}. Look for an executable file with extension .AppImage`);
 };

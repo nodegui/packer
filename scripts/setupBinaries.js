@@ -13,7 +13,7 @@ function getArtifactsConfig() {
   const artifacts = [
     {
       name: "Linux deploy Qt",
-      link: `https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage`,
+      link: `https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage`,
       outPath: linuxDeployQtBinary,
       postSetup: async () => {
         console.log("Setting up permissions for linuxdeployqt");
