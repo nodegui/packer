@@ -1,6 +1,6 @@
 # Packer 📦
 
-Packer is a npm module that allows you to package apps built with NodeGUI or React NodeGUI into a standalone executable. Packer works on Mac, Windows and Linux
+Packer is a npm module that allows you to package apps built with NodeGui or React NodeGui into a standalone executable. Packer works on Mac, Windows and Linux
 
 This is a initial MVP release of the module. 
 
@@ -46,7 +46,7 @@ Packer uses Qt's packaging tools in all three platforms.
 
 
 # Requirements
-- Needs Qode v1.0.4 and up (NodeGUI v0.1.7 and up)
+- Needs Qode v2.x (NodeGui v0.15.0 and up)
 
 
 # Future enhancements:
