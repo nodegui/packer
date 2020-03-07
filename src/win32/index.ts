@@ -3,6 +3,11 @@ import path from "path";
 import { spawn } from "child_process";
 //@ts-ignore
 import qode from "@nodegui/qode";
+//@ts-ignore
+import { qtHome } from "@nodegui/nodegui/config/qtConfig";
+
+import { switchToGuiSubsystem } from "./patchQode";
+
 const cwd = process.cwd();
 const deployDirectory = path.resolve(cwd, "deploy");
 const configFile = path.resolve(deployDirectory, "config.json");
@@ -19,12 +24,30 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
   });
 };
 
+function getAllNodeAddons(dirPath: string) {
+  const addonExt = "node";
+  let dir = fs.readdirSync(dirPath);
+  return dir
+    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt})`, "ig")))
+    .map(eachElement => path.resolve(dirPath, eachElement));
+}
+
 const runWinDeployQt = async (appName: string, buildDir: string) => {
-  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome;
   const winDeployQtBin = path.resolve(qtHome, "bin", "windeployqt.exe");
+
+  const distPath = path.resolve(buildDir, "dist");
+  const allAddons = getAllNodeAddons(distPath);
+
   const winDeployQt = spawn(
     winDeployQtBin,
-    [`qode.exe`, "--verbose=2", "--release", "--no-translations"],
+    [
+      ...allAddons,
+      "--verbose=2",
+      "--release",
+      "--no-translations",
+      "--compiler-runtime",
+      `--dir=${buildDir}`
+    ],
     {
       cwd: buildDir
     }
@@ -80,5 +103,7 @@ export const pack = async (distPath: string) => {
   await copyAppDist(distPath, buildAppPackage);
   console.log(`running windeployqt`);
   await runWinDeployQt(appName, buildAppPackage);
+  console.log(`Hiding Qode's console`);
+  await switchToGuiSubsystem(path.resolve(buildAppPackage, "qode.exe"));
   console.log(`Build successful. Find the app at ${buildDir}`);
 };

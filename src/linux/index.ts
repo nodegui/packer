@@ -3,9 +3,12 @@ import path from "path";
 import { spawn } from "child_process";
 //@ts-ignore
 import qode from "@nodegui/qode";
+//@ts-ignore
+import { qtHome } from "@nodegui/nodegui/config/qtConfig";
 const cwd = process.cwd();
 const deployDirectory = path.resolve(cwd, "deploy");
 const configFile = path.resolve(deployDirectory, "config.json");
+const linuxDeployQtBin = path.resolve(__dirname, "..", "..", "deps", "linuxdeployqt");
 
 const copyQode = async (dest: string) => {
   const qodeBinaryFile = qode.qodePath;
@@ -19,19 +22,39 @@ const copyAppDist = async (distPath: string, resourceDir: string) => {
   });
 };
 
+function getAllNodeAddons(dirPath: string) {
+  const addonExt = "node";
+  let dir = fs.readdirSync(dirPath);
+  return dir
+    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt})`, "ig")))
+    .map(eachElement => path.resolve(dirPath, eachElement));
+}
+
+const addonCommands = (addonPaths: string[]): string[] => {
+  return addonPaths.reduce((commandList: string[], currentAddon) => {
+    commandList.push(`-executable=${currentAddon}`);
+    return commandList;
+  }, []);
+};
+
+
 const runLinuxDeployQt = async (appName: string, buildDir: string) => {
-  const qtHome = process.env.QT_INSTALL_DIR || qode.qtHome; //linux qt build doesnt have linuxdeployqt
-  const linuxDeployQtBin = path.resolve(qode.qtHome, "bin", "linuxdeployqt.AppImage");
-  try {
-    await fs.chmod(linuxDeployQtBin, "755");
-  } catch (err) {
-    console.warn(`Warning: Tried to fix permission for linuxdeployqt but failed`);
-  }
+  
+  const distPath = path.resolve(buildDir, "dist");
+  const allAddons = getAllNodeAddons(distPath);
+  const LD_LIBRARY_PATH=`${qtHome}/lib:${process.env.LD_LIBRARY_PATH}`;
 
   const linuxDeployQt = spawn(
     linuxDeployQtBin,
-    [`qode`, "-verbose=2","-unsupported-bundle-everything","-appimage",`-qmake=${path.resolve(qtHome,'bin','qmake')}`],
-    { cwd: buildDir}
+    [
+      `qode`,
+      "-verbose=2",
+      "-bundle-non-qt-libs",
+      "-appimage",
+      `-qmake=${path.resolve(qtHome, "bin", "qmake")}`,
+      ...addonCommands(allAddons)
+    ],
+    { cwd: buildDir, env: {...process.env, LD_LIBRARY_PATH} }
   );
 
   return new Promise((resolve, reject) => {
@@ -85,5 +108,5 @@ export const pack = async (distPath: string) => {
   await copyAppDist(distPath, buildAppPackage);
   console.log(`running linuxdeployqt`);
   await runLinuxDeployQt(appName, buildAppPackage);
-  console.log(`Build successful. Find the app at ${buildDir}`);
+  console.log(`Build successful. Find the AppImage at ${buildAppPackage}. Look for an executable file with extension .AppImage`);
 };
