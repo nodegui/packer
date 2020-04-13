@@ -60,7 +60,6 @@ const runMacDeployQt = async ({
 
   const options = [
     `${appName}.app`,
-    "-dmg",
     "-verbose=3",
     `-libpath=${qode.qtHome}`,
     ...addonCommands(allAddons)
@@ -113,7 +112,7 @@ export const pack = async (distPath: string, identity?: string) => {
   const buildDir = path.resolve(usertemplate, "build");
   const buildAppPackage = path.resolve(buildDir, `${appName}.app`);
   const Contents = path.resolve(buildAppPackage, "Contents");
-  const MacOs = path.resolve(Contents, "MacOs");
+  const MacOs = path.resolve(Contents, "MacOS");
   const resourceDir = path.resolve(Contents, "Resources");
   console.log(`cleaning build directory at ${buildDir}`);
   await fs.remove(buildDir);
@@ -126,6 +125,6 @@ export const pack = async (distPath: string, identity?: string) => {
   console.log(`running macdeployqt`);
 
   await runMacDeployQt({ appName, buildDir, resourceDir, identity });
-
-  console.log(`Build successful. Find the dmg/app at ${buildDir}`);
+  console.log(`Build successful. Find the app at ${buildDir}`);
 };
+
