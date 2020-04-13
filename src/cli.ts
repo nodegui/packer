@@ -6,8 +6,7 @@ import { getPacker } from "./index";
 
 program
   .option("-i, --init <name>", "Creates initial deploy files")
-  .option("-p, --pack <distPath>", "Packs the app into deployable")
-  .option("-s, --sign <identity>", "Signs the app during packing using identity (macOS)");
+  .option("-p, --pack <distPath>", "Packs the app into deployable");
 
 program.parse(process.argv);
 const options = program.opts();
@@ -20,5 +19,5 @@ if (program.init) {
 }
 
 if (program.pack) {
-  packer.pack(options.pack, options.sign);
+  packer.pack(options.pack);
 }

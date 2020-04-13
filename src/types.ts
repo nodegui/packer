@@ -1,0 +1,3 @@
+type Config = {
+  appName: string;
+};
