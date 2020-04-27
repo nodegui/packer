@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@nodegui/artifact-installer": "^1.0.0",
-    "commander": "^4.0.1",
+    "commander": "^5.1.0",
     "fs-extra": "^8.1.0",
     "plist": "^3.0.1"
   }
