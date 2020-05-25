@@ -20,7 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@nodegui/nodegui": "^0.15.0-alpha-4",
-    "@types/fs-extra": "^8.0.0",
+    "@types/fs-extra": "^9.0.1",
     "@types/node": "^13.9.0",
     "@types/plist": "^3.0.2",
     "typescript": "^3.5.3"
