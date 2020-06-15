@@ -19,7 +19,7 @@
   "author": "atulanand94@gmail.com",
   "license": "MIT",
   "devDependencies": {
-    "@nodegui/nodegui": "^0.15.0-alpha-4",
+    "@nodegui/nodegui": "^0.22.0",
     "@types/fs-extra": "^8.0.0",
     "@types/node": "^13.9.0",
     "@types/plist": "^3.0.2",
