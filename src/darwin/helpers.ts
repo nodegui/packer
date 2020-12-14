@@ -64,6 +64,7 @@ export async function runMacDeployQt({
     `${appName}.app`,
     "-verbose=3",
     `-libpath=${qode.qtHome}`,
+    '-dmg',
     ...addonCommands(allAddons),
   ];
 
