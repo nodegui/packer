@@ -26,7 +26,7 @@ function getAllNodeAddons(dirPath: string) {
   const addonExt = "node";
   let dir = fs.readdirSync(dirPath);
   return dir
-    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt})`, "ig")))
+    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt}$)`, "ig")))
     .map(eachElement => path.resolve(dirPath, eachElement));
 }
 
