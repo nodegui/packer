@@ -20,7 +20,7 @@ const copyQode = async (dest: string) => {
 
 const copyAppDist = async (distPath: string, resourceDir: string) => {
   await fs.copy(distPath, path.resolve(resourceDir, "dist"), {
-    recursive: true
+    recursive: true,
   });
 };
 
@@ -28,8 +28,8 @@ function getAllNodeAddons(dirPath: string) {
   const addonExt = "node";
   let dir = fs.readdirSync(dirPath);
   return dir
-    .filter(elm => elm.match(new RegExp(`.*\.(${addonExt}$)`, "ig")))
-    .map(eachElement => path.resolve(dirPath, eachElement));
+    .filter((elm) => elm.match(new RegExp(`.*\.(${addonExt}$)`, "ig")))
+    .map((eachElement) => path.resolve(dirPath, eachElement));
 }
 
 const runWinDeployQt = async (appName: string, buildDir: string) => {
@@ -46,25 +46,25 @@ const runWinDeployQt = async (appName: string, buildDir: string) => {
       "--release",
       "--no-translations",
       "--compiler-runtime",
-      `--dir=${buildDir}`
+      `--dir=${buildDir}`,
     ],
     {
-      cwd: buildDir
+      cwd: buildDir,
     }
   );
 
   return new Promise((resolve, reject) => {
-    winDeployQt.stdout.on("data", function(data) {
+    winDeployQt.stdout.on("data", function (data) {
       console.log("stdout: " + data.toString());
     });
 
-    winDeployQt.stderr.on("data", function(data) {
+    winDeployQt.stderr.on("data", function (data) {
       console.log("stderr: " + data.toString());
     });
 
-    winDeployQt.on("exit", function(code) {
+    winDeployQt.on("exit", function (code) {
       if (!code) {
-        return resolve();
+        return resolve(true);
       }
       return reject("child process exited with code " + code);
     });
@@ -73,7 +73,7 @@ const runWinDeployQt = async (appName: string, buildDir: string) => {
 
 export const init = async (appName: string) => {
   const config = {
-    appName: null
+    appName: null,
   };
   const templateDirectory = path.resolve(__dirname, "../../template/win32");
   const userTemplate = path.resolve(deployDirectory, "win32");

@@ -64,7 +64,7 @@ export async function runMacDeployQt({
     `${appName}.app`,
     "-verbose=3",
     `-libpath=${qode.qtHome}`,
-    '-dmg',
+    "-dmg",
     ...addonCommands(allAddons),
   ];
 
@@ -81,7 +81,7 @@ export async function runMacDeployQt({
 
     macDeployQt.on("exit", function (code) {
       if (!code) {
-        return resolve();
+        return resolve(true);
       }
       return reject("child process exited with code " + code);
     });
