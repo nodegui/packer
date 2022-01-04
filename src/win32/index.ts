@@ -34,6 +34,8 @@ function getAllNodeAddons(dirPath: string) {
 
 const runWinDeployQt = async (appName: string, buildDir: string) => {
   const winDeployQtBin = path.resolve(qtHome, "bin", "windeployqt.exe");
+  // insert qtHome/bin into the PATH for windeployqt work correctly
+  process.env.PATH=`${path.resolve(qtHome, "bin")};${process.env.PATH}`;
 
   const distPath = path.resolve(buildDir, "dist");
   const allAddons = getAllNodeAddons(distPath);
@@ -50,6 +52,7 @@ const runWinDeployQt = async (appName: string, buildDir: string) => {
     ],
     {
       cwd: buildDir,
+      env: process.env,
     }
   );
 
